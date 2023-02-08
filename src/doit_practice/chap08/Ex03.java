@@ -1,16 +1,14 @@
 package doit_practice.chap08;
 
 import java.util.Comparator;
-import java.util.List;
 
-public class Ex01<E> {
-	
-	//E, T -> object로 형변환 가능. E, T = object
+
+public class Ex03<E> {
 
 	//--- 노드 ---//
 	class Node<E> {
-		private E data;					// 데이터
-		private Node<E> next;		// 뒤쪽 포인터(다음 노드에 대한 참조)
+		private E data;         // 데이터
+		private Node<E> next;   // 뒤쪽 포인터(다음 노드에 대한 참조)
 
 		//--- 생성자 ---//
 		Node(E data, Node<E> next) {
@@ -20,11 +18,12 @@ public class Ex01<E> {
 	}
 
 	private Node<E> head;		// 머리 포인터(머리 노드에 대한 참조)
+	private Node<E> tail;		// 꼬리 포인터(꼬리 노드에 대한 참조)
 	private Node<E> crnt;		// 선택 포인터(선택 노드에 대한 참조)
 
 	//--- 생성자 ---//
-	public Ex01() {
-		head = crnt = null; //연결리스트가 비어있는지 확인
+	public Ex03() {
+		head = tail = crnt = null;
 	}
 
 	//--- 노드 검색 ---//
@@ -32,7 +31,7 @@ public class Ex01<E> {
 		Node<E> ptr = head;							// 현재 스캔 중인 노드
 
 		while (ptr != null) {
-			if (c.compare(obj, ptr.data) == 0) {	// 검색 성공
+			if (c.compare(obj, ptr.data) == 0) {			// 검색 성공
 				crnt = ptr;
 				return ptr.data;
 			}
@@ -42,36 +41,37 @@ public class Ex01<E> {
 	}
 
 	//--- 머리에 노드를 삽입 ---//
-	public void addFirst(E obj) {
-		Node<E> ptr = head;					// 삽입 전의 머리 노드
-		head = crnt = new Node<E>(obj, ptr);
+	public void addFirst(E o) {
+		boolean empty = (tail == null);
+		Node<E> ptr = head;							// 삽입 전의 머리 노드
+		head = crnt = new Node<E>(o, ptr);
+		if (empty) tail = crnt;
 	}
 
 	//--- 꼬리에 노드를 삽입 ---//
-	public void addLast(E obj) {
-		if (head == null) {				// 리스트가 비어 있으면 
-			addFirst(obj);				// 머리에 삽입
-		} else {
-			Node<E> ptr = head;
-			while (ptr.next != null)
-				ptr = ptr.next;
-			ptr.next = crnt = new Node<E>(obj, null);
+	public void addLast(E o) {
+		if (head == null)			// 리스트가 비어 있으면 
+			addFirst(o);				// 머리에 삽입
+		else {
+			tail.next = crnt = new Node<E>(o, null);
+			tail = crnt;
 		}
 	}
 
 	//--- 머리 노드를 삭제 ---//
 	public void removeFirst() {
-		if (head != null) {						// 리스트가 비어 있지 않으면
+		if (head != null) {					 // 리스트가 비어 있지 않으면
 			head = crnt = head.next;
+			if (head == null) tail = null;
 		}
 	}
 
 	//--- 꼬리 노드를 삭제 ---//
 	public void removeLast() {
 		if (head != null) {
-			if (head.next == null) {		// 노드가 하나뿐이면 
+			if (head.next == null)		           // 노드가 하나뿐이면 
 				removeFirst();					// 머리 노드를 삭제
-			} else {
+			else {
 				Node<E> ptr = head;			// 스캔 중인 노드
 				Node<E> pre = head;			// 스캔 중인 노드의 앞쪽 노드
 
@@ -80,22 +80,24 @@ public class Ex01<E> {
 					ptr = ptr.next;
 				}
 				pre.next = null;				// pre는 삭제 후의 꼬리 노드
-				crnt = pre;
+				tail = crnt = pre;
 			}
 		}
 	}
 
 	//--- 노드 p를 삭제 ---//
-	public void remove(Node p) {
+	public void remove(Node<E> p) {
 		if (head != null) {
-			if (p == head) {				// p가 머리 노드이면 
-				removeFirst();			// 머리 노드를 삭제
-			} else {
+			if (p == head)						// p가 머리 노드이면 
+				removeFirst();					// 머리 노드를 삭제
+			else if (p == tail)				// p가 꼬리 노드이면 
+				removeLast();						// 꼬리 노드를 삭제
+			else {
 				Node<E> ptr = head;
 
 				while (ptr.next != p) {
 					ptr = ptr.next;
-					if (ptr == null) {return;}	// p가 리스트에 없음
+					if (ptr == null) return;	// p가 리스트에 없음
 				}
 				ptr.next = p.next;
 				crnt = ptr;
@@ -110,28 +112,25 @@ public class Ex01<E> {
 
 	//--- 모든 노드를 삭제 ---//
 	public void clear() {
-		while (head != null) {		// 노드에 아무것도 없을 때까지
+		while (head != null)		// 노드에 아무것도 없을 때까지
 			removeFirst();				// 머리 노드를 삭제
-		}
 		crnt = null;
 	}
 
 	//--- 선택 노드를 하나 뒤쪽으로 진행 ---//
 	public boolean next() {
-		if (crnt == null || crnt.next == null) {
+		if (crnt == null || crnt.next == null)
 			return false;					// 나아갈 수 없음
-		}
 		crnt = crnt.next;
 		return true;
 	}
 
 	//--- 선택 노드를 출력 ---//
 	public void printCurrentNode() {
-		if (crnt == null) {
+		if (crnt == null)
 			System.out.println("선택한 노드가 없습니다.");
-		} else {
-			System.out.println(crnt.data);
-		}
+		else
+			System.out.println(crnt.data.toString());
 	}
 
 	//--- 모든 노드를 출력 ---//
@@ -139,7 +138,7 @@ public class Ex01<E> {
 		Node<E> ptr = head;
 
 		while (ptr != null) {
-			System.out.println(ptr.data);
+			System.out.println(ptr.data.toString());
 			ptr = ptr.next;
 		}
 	}
@@ -161,9 +160,9 @@ public class Ex01<E> {
 				} else
 					pre = ptr2;
 			}
-			if (count == 0) {
+			if (count == 0)
 				ptr = ptr.next;
-			} else {
+			else {
 				Node<E> temp = ptr;
 				remove(ptr);
 				ptr = temp.next;
@@ -173,15 +172,15 @@ public class Ex01<E> {
 	}
 
   //---【연습8-2】 머리부터 n개 뒤 노드의 데이터에 대한 참조를 반환 ---//
-  public E retrieve(int n) {
+	public E retrieve(int n) {
 		Node<E> ptr = head;
 
 		while (n >= 0 && ptr != null) {
 			if (n-- == 0) {
 				crnt = ptr;
-				return ptr.data;				// 검색 성공
+				return ptr.data;						// 검색 성공
 			}
-			ptr = ptr.next;					// 다음 노드를 선택
+			ptr = ptr.next;							// 다음 노드를 선택
 		}
 		return null;
 	}
