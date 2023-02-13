@@ -1,10 +1,10 @@
-// 연습9-1＋연습9-2
-// 이진검색트리
+package doit_practice.chap09;
 
 import java.util.Comparator;
 
-public class BinTree<K,V> {
 
+public class Ex01_02<K,V> {
+ 
 	//--- 노드 ---//
 	static class Node<K,V> {
 		private K key;						// 키값
@@ -40,12 +40,12 @@ public class BinTree<K,V> {
 	private Comparator<? super K> comparator = null;	// 컴퍼레이터
 
 	//--- 생성자 ---//
-	public BinTree() {
+	public Ex01_02() {
 		root = null;
 	}
 
 	//--- 생성자 ---//
-	public BinTree(Comparator<? super K> c) {
+	public Ex01_02(Comparator<? super K> c) {
 		this();
 		comparator = c;
 	}
@@ -61,47 +61,42 @@ public class BinTree<K,V> {
 		Node<K,V> p = root;									// 루트에 주목
 
 		while (true) {
-			if (p == null) {										// 더 이상 나아갈 수 없으면
+			if (p == null)										// 더 이상 나아갈 수 없으면
 				return null;										// 검색 실패
-			}
 			int cond = comp(key, p.getKey());	// key와 노드 p의 키(key)를 비교
-			if (cond == 0) {										// 같으면
+			if (cond == 0)										// 같으면
 				return p.getValue();						          // 검색 성공
-			} else if (cond < 0) { 								    // 키 쪽이 작으면 
+			else if (cond < 0)								    // 키 쪽이 작으면 
 				p = p.left;										// 왼쪽 서브 트리에서 검색
-			} else {												// 키 쪽이 크면
+			else												// 키 쪽이 크면
 				p = p.right;										// 오른쪽 서브 트리에서 검색
-			}
 		}
 	}
 
 	//--- node를 루트로 하는 서브 트리에 노드<K,V>를 삽입 ---//
 	private void addNode(Node<K,V> node, K key, V data) {
 		int cond = comp(key, node.getKey());
-		if (cond == 0) {
+		if (cond == 0)
 			return;							// key가 이진검색트리에 이미 있음
-		} else if (cond < 0) {
-			if (node.left == null) {
+		else if (cond < 0) {
+			if (node.left == null)
 				node.left = new Node<K,V>(key, data, null, null);
-			} else {
+			else
 				addNode(node.left, key, data);			// 왼쪽 서브 트리에 주목
-			}
 		} else {
-			if (node.right == null) {
+			if (node.right == null)
 				node.right = new Node<K,V>(key, data, null, null);
-			} else {
+			else
 				addNode(node.right, key, data);			// 오른쪽 서브 트리에 주목
-			}
 		}
 	}
 
 	//--- 노드를 삽입 ---//
 	public void add(K key, V data) {
-		if (root == null) {
+		if (root == null)
 			root = new Node<K,V>(key, data, null, null);
-		} else { 
+		else
 			addNode(root, key, data);
-		}
 	}
 
 	//--- 키값이 key인 노드를 삭제 --//
@@ -111,13 +106,12 @@ public class BinTree<K,V> {
 		boolean isLeftChild = true;			// p은 부모의 왼쪽 자식 노드?
 
 		while (true) {
-			if (p == null) {											// 더 이상 나아갈 수 없으면
+			if (p == null)											// 더 이상 나아갈 수 없으면
 				return false;											// 그 키값은 없음
-			}
 			int cond = comp(key, p.getKey());						// key와 노드 p의 키값을 비교
-			if (cond == 0) {											// 같으면
+			if (cond == 0)											// 같으면
 				break;												// 검색 성공
-			} else {
+			else {
 				parent = p;											// 가지로 내려가기 전에 부모를 설정
 				if (cond < 0) {										// 키 쪽이 작으면 
 					isLeftChild = true;								// 왼쪽 자식으로 내려감
@@ -130,21 +124,19 @@ public class BinTree<K,V> {
 		}
 
 		if (p.left == null) {											// p에 왼쪽 자식이 없음
-			if (p == root) {					 
+			if (p == root)					 
 				root = p.right;
-			} else if (isLeftChild) {
+			else if (isLeftChild)
 				parent.left  = p.right;					// 부모의 왼쪽 포인터가 오른쪽 자식을 가리킴
-			} else {
+			else
 				parent.right = p.right;					// 부모의 오른쪽 포인터가 오른쪽 자식을 가리킴
-			}
 		} else if (p.right == null) {						// p에 오른쪽 자식이 없음
-			if (p == root) {
+			if (p == root)
 				root = p.left;
-			} else if (isLeftChild) {
+			else if (isLeftChild)
 				parent.left  = p.left;					// 부모의 왼쪽 포인터가 왼쪽 자식을 가리킴
-			} else {
+			else
 				parent.right = p.left;					// 부모의 오른쪽 포인터가 왼쪽 자식을 가리킴
-			}
 		} else {
 			parent = p;
 			Node<K,V> left = p.left;					// 서브 트리 가운데 최대 노드
@@ -156,11 +148,10 @@ public class BinTree<K,V> {
 			}
 			p.key  = left.key;								// left의 키값을 p로 옮김
 			p.data = left.data;								// left의 데이터를 p로 옮김
-			if (isLeftChild) {
+			if (isLeftChild)
 				parent.left  = left.left;				// left를 삭제
-			} else {
+			else
 				parent.right = left.left;				// left를 삭제
-			}
 		}
 		return true;
 	}
@@ -195,28 +186,26 @@ public class BinTree<K,V> {
 
 	// 가장 작은 키값을 갖는 노드를 반환합니다
 	private Node<K,V> getMinNode() {
-		if (root == null) {
+		if (root == null)
 			return null;
-		} else {
+		else {
 			Node<K,V> p = root;					// 루트에 주목
 
-			while (p.left != null) {
+			while (p.left != null)
 				p = p.left;
-			}
 			return p;
 		}
 	}
 
 	// 가장 큰 키값을 갖는 노드를 반환합니다
 	private Node<K,V> getMaxNode() {
-		if (root == null) {
+		if (root == null)
 			return null;
-		} else {
+		else {
 			Node<K,V> p = root;					// 루트에 주목
 
-			while (p.right != null) {
+			while (p.right != null)
 				p = p.right;
-			}
 			return p;
 		}
 	}
