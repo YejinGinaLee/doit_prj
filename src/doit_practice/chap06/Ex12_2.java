@@ -13,7 +13,7 @@ public class Ex12_2 {
 	static void quickSort(int[] a, int left, int right) {
 		Ex12 lstack = new Ex12(right - left + 1);
 		Ex12 rstack = new Ex12(right - left + 1);
-
+#
 		lstack.push(left);
 		rstack.push(right);
 
